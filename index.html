@@ -1,16 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz</title>
 </head>
+
 <body>
   <div class="quiz-container">
-    <section id="welcome-screen">
-      
+    <!-- WELCOME SCREEN -->
+    <section id="welcome-screen" class="quiz-section active">
+      <h1>Welcome to Quiz</h1>
+      <form id="player-form">
+        <div class="form-group">
+          <label for="player-name">Type your name</label>
+          <input type="text" id="player-name" name="player-name" required>
+        </div>
+        <button type="submit" id="start-button" class="btn">Start game</button>
+      </form>
     </section>
+
+    <!-- QUIZ QUESTIONS SCREEN -->
+    <section id="question-screen" class="quiz-section ">
+      <div class="quiz-header">
+        <div class="player-info">
+          <span>Player: <span id="current-player">PlayerName</span></span>
+        </div>
+        <div class="quiz-progress">
+          <span>Question: <span id="current-player">1</span> from <span id="total-questions">10</span></span>
+        </div>
+      </div>
+    </section>
+
   </div>
 
 </body>
+
 </html>
