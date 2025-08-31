@@ -178,7 +178,7 @@ input[type="radio"] {
 }
 
 
-#final-result {
+.final-result {
     text-align: center;
     margin-bottom: 24px;
 }
@@ -201,42 +201,5 @@ input[type="radio"] {
 .hidden {
     display: none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

@@ -32,30 +32,14 @@
           <span>Question: <span id="current-question">1</span> from <span id="total-questions">10</span></span>
         </div>
         <div class="quiz-score">
-          <span>Score: <span id="current-score">0</span></span></span>
+          <span>Score: <span id="current-score">0</span></span>
         </div>
-
       </div>
 
       <div id="question-container">
         <h2 id="question-text">Some question</h2>
         <div id="options-container">
-          <div class="option">
-            <input type="radio" name="quiz-option" id="id1" value="option1">
-            <label for="id1">option 1</label>
-          </div>
-          <div class="option">
-            <input type="radio" name="quiz-option" id="id2" value="option2">
-            <label for="id2">option 2</label>
-          </div>
-          <div class="option">
-            <input type="radio" name="quiz-option" id="id3" value="option3">
-            <label for="id3">option 3</label>
-          </div>
-          <div class="option">
-            <input type="radio" name="quiz-option" id="id4" value="option4">
-            <label for="id4">option 4</label>
-          </div>
+          <!-- TEMPLATES WILL BE GENERATED -->
         </div>
 
         <div id="feedback-container" class="hidden">
@@ -65,19 +49,26 @@
       </div>
     </section>
 
-    <!-- RESULT sCREEN -->
+    <!-- RESULT SCREEN -->
     <section id="result-screen" class="quiz-question">
       <h2>Results of quiz</h2>
-      <div id="final-result">
+      <div class="final-result">
         <p>Congratulations, <span id="result-player-name">Player 1</span>!</p>
-        <p>Your results: <span id="result-score">0<span> from </span><span id="result-total">10</span></span></p>
-        <p id="result-precentage">50%</p>
+        <p>Your results: <span id="result-score">0</span> from <span id="result-total">10</span></p>
+        <p id="result-percentage">50%</p>
       </div>
       <div id="result-actions">
         <button id="restart-button" class="btn">Restart</button>
       </div>
     </section>
   </div>
+
+  <template id="option-template">
+    <div class="option">
+      <input type="radio" name="quiz-option" id="">
+      <label for=""></label>
+    </div>
+  </template>
 
   <script src="quiz-data.js"></script>
   <script src="index.js"></script>
