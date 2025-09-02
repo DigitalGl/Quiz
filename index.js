@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const playerForm = document.getElementById("player-form");
   const playerNameInput = document.getElementById("player-name");
-  const requestNewQuestionsButton = document.getElementById("request-questions-btn");
 
   const currentPlayerDisplay = document.getElementById("current-player");
   const currentQuestionDisplay = document.getElementById("current-question");
@@ -136,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     playerNameInput.value = "";
     welcomeScreen.classList.add("active");
     resultScreen.classList.remove("active");
+    playerForm.classList.remove("hidden");
   }
 
   function startGame(e) {
@@ -170,11 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
-  requestNewQuestions("https://js-quiz-questions-server.vercel.app/api/questions1")
+  requestNewQuestions("https://js-quiz-questions-server.vercel.app/api/questions?limit=30");
 
-    requestNewQuestionsButton.addEventListener("click", () => {
-      requestNewQuestions("https://js-quiz-questions-server.vercel.app/api/questions")
-    })
 
     function requestNewQuestions(url) {
       fetch(url)
