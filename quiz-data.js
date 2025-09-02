@@ -110,3 +110,18 @@ const quizQuestions = [
         explanation: "localStorage позволяет сохранять данные в браузере пользователя для последующего использования без обращения к серверу"
     },
 ];
+
+
+const url = "https://js-quiz-questions-server.vercel.app/api/questions";
+const quesries = {
+    theme: "js | html | css" ,
+    limit: 10,
+    page: 1,
+}
+
+const restrictedUrls = "https://js-quiz-questions-server.vercel.app/api/restricted"
+const alternativeAPI = "https://country-search-seven-gilt.vercel.app"
+
+
+
+

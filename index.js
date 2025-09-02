@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const playerForm = document.getElementById("player-form");
   const playerNameInput = document.getElementById("player-name");
+  const requestNewQuestionsButton = document.getElementById("request-questions-btn");
 
   const currentPlayerDisplay = document.getElementById("current-player");
   const currentQuestionDisplay = document.getElementById("current-question");
@@ -29,6 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let score = 0;
   let currentPlayer = "";
   let hasAnswered = false;
+  let quizQuestions = [];
+  let isLoading = true;
+  let isError = false;
 
   let questionsCount = quizQuestions.length;
   resultTotal.innerText = questionsCount;
@@ -136,6 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startGame(e) {
     e.preventDefault();
+    if(isLoading || isError) return;
     currentPlayer = playerNameInput.value.trim();
     if (!currentPlayer) {
       alert("Enter your name");
@@ -148,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     welcomeScreen.appendChild(dountDownElement);
     dountDownElement.innerText = countDown;
     playerForm.classList.add("hidden");
-    
+
 
     const timer = setInterval(() => {
       countDown--;
@@ -164,4 +169,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }, 1000);
   }
+
+  requestNewQuestions("https://js-quiz-questions-server.vercel.app/api/questions1")
+
+    requestNewQuestionsButton.addEventListener("click", () => {
+      requestNewQuestions("https://js-quiz-questions-server.vercel.app/api/questions")
+    })
+
+    function requestNewQuestions(url) {
+      fetch(url)
+      .then((res) => res.json())
+      .then((responseObject) => {
+            quizQuestions = responseObject.data
+            questionsCount = quizQuestions.length;
+            resultTotal.innerText = questionsCount;
+            totalQuestionsDisplay.innerText = questionsCount;
+            isLoading = false;
+            isError = false;
+        })
+        .catch((error) => {
+          console.error("Error fetching quiz questions:", error);
+          requestNewQuestionsButton.classList.remove("hidden");
+          isLoading = false;
+          isError = true;
+        })
+    }
+
 });
