@@ -13,11 +13,39 @@
     <!-- WELCOME SCREEN -->
     <section id="welcome-screen" class="quiz-section active">
       <h1>Welcome to Quiz</h1>
+      <form id="admin-form" class="admin-form">
+        <select name="action" id="admin-action">
+          <option value="post">Create (POST)</option>
+          <option value="put">Update (PUT)</option>
+          <option value="patch">Partical Update (PATCH)</option>
+          <option value="delete">Delete (DELETE)</option>
+        </select>
+        <input type="text" id="question-input" placeholder="Question"/>
+        <input type="text" id="option1" placeholder="Option 1"/>
+        <input type="text" id="option2" placeholder="Option 2"/>
+        <input type="text" id="option3" placeholder="Option 3"/>
+        <input type="text" id="option4" placeholder="Option 4"/>
+        <input type="number" id="correct-answer" placeholder="Correct Answer(0-3)"/>
+        <input type="text" id="explanation" placeholder="Explanation"/>
+        <input type="text" id="theme" placeholder="Theme (js, html, css)"/> <!-- Исправлено: id="correct-answer" на id="theme" -->
+        <button type="submit" class="btn">Submit</button>
+      </form>
       <form id="player-form">
         <div class="form-group">
           <label for="player-name">Type your name</label>
           <input type="text" id="player-name" name="player-name" required>
         </div>
+        <select name="theme" id="questions-theme-select" class="btn" required>
+          <option value="html" selected>HTML</option>
+          <option value="css">CSS</option>
+          <option value="js">JavaScript</option>
+        </select>
+        <select name="limit" id="questions-limit-select" class="btn">
+          <option value="10" selected>Get 10 questions</option>
+          <option value="20">Get 20 questions</option>
+          <option value="50">Get 50 questions</option>
+          <option value="100">Get 100 questions</option>
+        </select>
         <button type="submit" class="btn">Start game</button>
       </form>
     </section>
@@ -50,7 +78,7 @@
     </section>
 
     <!-- RESULT SCREEN -->
-    <section id="result-screen" class="quiz-question">
+    <section id="result-screen" class="quiz-section"> <!-- Исправлено: quiz-question на quiz-section -->
       <h2>Results of quiz</h2>
       <div class="final-result">
         <p>Congratulations, <span id="result-player-name">Player 1</span>!</p>

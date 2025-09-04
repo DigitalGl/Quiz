@@ -3,8 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const questionScreen = document.getElementById("question-screen");
   const resultScreen = document.getElementById("result-screen");
 
+  const adminForm = document.getElementById("admin-form");
+
   const playerForm = document.getElementById("player-form");
   const playerNameInput = document.getElementById("player-name");
+  const selectedTheme = document.getElementById("questions-theme-select");
+  const selectedLimit = document.getElementById("questions-limit-select");
 
   const currentPlayerDisplay = document.getElementById("current-player");
   const currentQuestionDisplay = document.getElementById("current-question");
@@ -30,8 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPlayer = "";
   let hasAnswered = false;
   let quizQuestions = [];
-  let isLoading = true;
-  let isError = false;
 
   let questionsCount = quizQuestions.length;
   resultTotal.innerText = questionsCount;
@@ -115,6 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  adminForm.addEventListener("submit", handleAdminSubmit);
+
+
   function showResults() {
     questionScreen.classList.remove("active");
     resultScreen.classList.add("active");
@@ -140,56 +145,145 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startGame(e) {
     e.preventDefault();
-    if(isLoading || isError) return;
     currentPlayer = playerNameInput.value.trim();
     if (!currentPlayer) {
       alert("Enter your name");
       return;
     }
 
-    let countDown = 3;
-    const dountDownElement = document.createElement("div");
-    dountDownElement.classList.add("countdown");
-    welcomeScreen.appendChild(dountDownElement);
-    dountDownElement.innerText = countDown;
-    playerForm.classList.add("hidden");
+    cheackUserName(currentPlayer) 
+    .then((message) => {
+      console.log(message);
+      const theme = selectedTheme.value;
+      const limit = selectedLimit.value;
 
+      requestNewQuestions(`https://js-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}&page=2`)
+      .then(() => {
+        let countDown = 3;
+        const dountDownElement = document.createElement("div");
+        dountDownElement.classList.add("countdown");
+        welcomeScreen.appendChild(dountDownElement);
+        dountDownElement.innerText = countDown;
+        playerForm.classList.add("hidden");
 
-    const timer = setInterval(() => {
-      countDown--;
-      dountDownElement.innerText = countDown;
-      if (countDown <= 0) {
-        dountDownElement.remove();
-        clearInterval(timer);
-        currentPlayerDisplay.innerText = currentPlayer;
-        resultPlayerName.innerText = currentPlayer;
-        welcomeScreen.classList.remove("active");
-        questionScreen.classList.add("active");
-        loadQuestion(currentQuestion);
-      }
-    }, 1000);
+        const timer = setInterval(() => {
+          countDown--;
+          dountDownElement.innerText = countDown;
+          if (countDown <= 0) {
+            dountDownElement.remove();
+            clearInterval(timer);
+            currentPlayerDisplay.innerText = currentPlayer;
+            resultPlayerName.innerText = currentPlayer;
+            welcomeScreen.classList.remove("active");
+            questionScreen.classList.add("active");
+            loadQuestion(currentQuestion);
+          }
+        }, 1000);
+      })
+    })
+    .catch((error) => {
+      alert(error);
+      return;
+    })
   }
 
-  requestNewQuestions("https://js-quiz-questions-server.vercel.app/api/questions?limit=30");
-
-
-    function requestNewQuestions(url) {
-      fetch(url)
+  async function requestNewQuestions(url) {
+    return fetch(url)
       .then((res) => res.json())
       .then((responseObject) => {
-            quizQuestions = responseObject.data
-            questionsCount = quizQuestions.length;
-            resultTotal.innerText = questionsCount;
-            totalQuestionsDisplay.innerText = questionsCount;
-            isLoading = false;
-            isError = false;
-        })
-        .catch((error) => {
-          console.error("Error fetching quiz questions:", error);
-          requestNewQuestionsButton.classList.remove("hidden");
-          isLoading = false;
-          isError = true;
-        })
+        quizQuestions = responseObject.data;
+        questionsCount = quizQuestions.length;
+        resultTotal.innerText = questionsCount;
+        totalQuestionsDisplay.innerText = questionsCount;
+      })
+      .catch((error) => {
+        console.error("Error fetching quiz questions:", error);
+        isLoading = false;
+        isError = true;
+      });
+  }
+
+  function handleAdminSubmit(e) {
+    e.preventDefault();
+    const action = adminForm.querySelector('#admin-action').value;
+    const questionData = {
+      action,
+      question: adminForm.querySelector('#question-input').value,
+      options: [
+        adminForm.querySelector('#option1').value,
+        adminForm.querySelector('#option2').value,
+        adminForm.querySelector('#option3').value,
+        adminForm.querySelector('#option4').value,
+      ],
+      correctAnswer: parseInt(adminForm.querySelector('#correct-answer').value),
+      explanation: adminForm.querySelector('#explanation').value,
+      theme: adminForm.querySelector('#theme').value,
     }
 
+    console.log(questionData);
+
+    if(action.toLowerCase() === "post") {
+      submitNewQuestion(questionData);
+    } else if (action === "put"){
+      updateQuestion(questionData);
+    } else if (action === "patch"){
+      partialUpdateQuestion(questionData);
+    } else if (action === "delete"){
+      deleteQuestion(questionData.theme, questionData.correctAnswer);
+    }
+    else {
+      alert("Invalid action. Please select POST.");
+    }
+  }
+
+
+  function submitNewQuestion(questionData) {
+    fetch("https://js-quiz-questions-server.vercel.app/api/resource", {
+      method: 'POST',
+      body: JSON.stringify(questionData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
+  function updateQuestion(questionData) {
+    fetch("https://js-quiz-questions-server.vercel.app/api/resource", {
+      method: 'PUT',
+      body: JSON.stringify(questionData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
+  function partialUpdateQuestion(questionData) {
+    fetch("https://js-quiz-questions-server.vercel.app/api/resource", {
+      method: 'PATCH',
+      body: JSON.stringify(questionData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
+  function deleteQuestion(theme, question) {
+    fetch(`https://js-quiz-questions-server.vercel.app/api/resource?theme=${theme}&question=${question}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async function cheackUserName(userName){
+    return new Promise((res, rej) => {
+      if(!userName) {
+        rej("Invelid username");
+      }
+        setTimeout(() => {
+          if(Math.random() > 0.5) {
+            res("User name is avilable");
+          } 
+            rej("User name is not available");
+        }, 500);
+    })
+  }
 });
