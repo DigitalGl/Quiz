@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const questionScreen = document.getElementById("question-screen");
   const resultScreen = document.getElementById("result-screen");
 
+  const showAdminFormButton = document.getElementById("show-id-form-btn");
   const adminForm = document.getElementById("admin-form");
 
   const playerForm = document.getElementById("player-form");
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const feedBackContainer = document.getElementById("feedback-container");
   const feedbackText = document.getElementById("feedback-text");
   const nextButton = document.getElementById("next-button");
+  const addToFavoritesButton = document.getElementById("favorite-heart");
 
   const resultPlayerName = document.getElementById("result-player-name");
   const resultScore = document.getElementById("result-score");
@@ -34,6 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPlayer = "";
   let hasAnswered = false;
   let quizQuestions = [];
+  let isQuestionSaved = false;
+  let isLoading = false; 
+  let isError = false; 
+
 
   let questionsCount = quizQuestions.length;
   resultTotal.innerText = questionsCount;
@@ -41,7 +47,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   playerForm.addEventListener("submit", startGame);
 
+  showAdminFormButton.addEventListener("click", () => {
+    adminForm.classList.toggle("hidden");
+  });
+
+  addToFavoritesButton.addEventListener("click", () => {
+    if(isQuestionSaved) return;
+    saveQuestionToFavorite();
+    addToFavoritesButton.classList.remove("add-favorite");
+    addToFavoritesButton.classList.add("added-favorite");
+    isQuestionSaved = true;
+  });
+
   nextButton.addEventListener("click", () => {
+    isQuestionSaved = false;
+    addToFavoritesButton.classList.remove("added-favorite");
+    addToFavoritesButton.classList.add("add-favorite");
     questionScreen.classList.add("fade-out");
     feedBackContainer.classList.add("hidden");
     setTimeout(() => {
@@ -159,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       requestNewQuestions(`https://js-quiz-questions-server.vercel.app/api/questions?limit=${limit}&theme=${theme}&page=2`)
       .then(() => {
-        let countDown = 3;
+        let countDown = 1;
         const dountDownElement = document.createElement("div");
         dountDownElement.classList.add("countdown");
         welcomeScreen.appendChild(dountDownElement);
@@ -274,16 +295,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function cheackUserName(userName){
-    return new Promise((res, rej) => {
-      if(!userName) {
-        rej("Invelid username");
-      }
+    return new Promise((res) => {
         setTimeout(() => {
-          if(Math.random() > 0.5) {
             res("User name is avilable");
-          } 
-            rej("User name is not available");
-        }, 500);
+        }, 50);
     })
   }
+
+  saveQuestionToFavorite = () => {
+    const question = quizQuestions[currentQuestion];
+    const favoritesString = localStorage.getItem("favorites");
+    const favorites = favoritesString ? JSON.parse(favoritesString) : [];
+    const newFavorites = [...favorites, question];
+    const newFavoritesString = JSON.stringify(newFavorites);
+    localStorage.setItem("favorites", newFavoritesString);
+  };
+
 });
